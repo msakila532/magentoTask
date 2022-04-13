@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+        <preference for="CRUD\AddCart\Api\FetchAllCartInterface"
+                    type="CRUD\AddCart\Model\FetchAllCartRepository" />
+
+        <preference for="CRUD\AddCart\Api\SingleCartDetailsInterface"
+                    type="CRUD\AddCart\Model\SingleCartDetailsRepository" />
+
+        <preference for="CRUD\AddCart\Api\SaveCartInterface"
+                    type="CRUD\AddCart\Model\SaveCartRepository" />
+
+        <preference for="CRUD\AddCart\Api\EditCartInterface"
+                    type="CRUD\AddCart\Model\EditCartRepository" />
+
+        <preference for="CRUD\AddCart\Api\DeleteCartInterface"
+                    type="CRUD\AddCart\Model\DeleteCartRepository" />
+
+        <preference for="CRUD\AddCart\Api\DataInterface"
+                    type="CRUD\AddCart\Model\Data" />
+</config>

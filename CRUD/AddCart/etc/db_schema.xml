@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+<table name="tbl_addcart_crud" resource="default" engine="innodb" comment="AddCart Crud table">
+    <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true"
+            comment="Id"/>
+    <column xsi:type="varchar" name="sku" nullable="false"  comment="Sku"/>
+    <column xsi:type="smallint" name="customer_id" nullable="true" padding="5"  comment="customer_id"/>
+    <column xsi:type="smallint" name="quote_id" nullable="false" padding="5"  comment="quote_id"/>
+    <column xsi:type="timestamp" name="created" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+            comment="created"/>
+    <constraint xsi:type="primary" referenceId="PRIMARY">
+        <column name="id"/>
+    </constraint>
+</table>
+</schema>
+

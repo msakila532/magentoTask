@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route method="GET" url="/V1/crudaddcart/getid">
+        <service class="CRUD\AddCart\Api\SingleCartDetailsInterface" method="getCartById"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/crudaddcart/getlist">
+        <service class="CRUD\AddCart\Api\FetchAllCartInterface" method="getCartList"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/crudaddcart/save">
+        <service class="CRUD\AddCart\Api\SaveCartInterface" method="saveCart"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/crudaddcart/update">
+        <service class="CRUD\AddCart\Api\EditCartInterface" method="updateCart"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/crudaddcart/delete">
+        <service class="CRUD\AddCart\Api\DeleteCartInterface" method="deleteCartById"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>
