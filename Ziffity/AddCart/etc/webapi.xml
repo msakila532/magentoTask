@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route method="GET" url="/V1/ziffityaddcart/getid">
+        <service class="Ziffity\AddCart\Api\SingleCartDetailsInterface" method="getCartById"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="GET" url="/V1/ziffityaddcart/getlist">
+        <service class="Ziffity\AddCart\Api\FetchAllCartInterface" method="getCartList"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/ziffityaddcart/save">
+        <service class="Ziffity\AddCart\Api\SaveCartInterface" method="saveCart"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/ziffityaddcart/update">
+        <service class="Ziffity\AddCart\Api\EditCartInterface" method="updateCart"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+    <route method="POST" url="/V1/ziffityaddcart/delete">
+        <service class="Ziffity\AddCart\Api\DeleteCartInterface" method="deleteCartById"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+</routes>
