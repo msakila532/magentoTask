@@ -1,0 +1,28 @@
+{
+    "name": "ziffity/addcustomer",
+    "description": "N/A",
+    "type": "ziffity-addcustomer",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "version": "100.0.0",
+    "require": {
+        "magento/framework": "103.0.*",
+        "magento/module-eav": "102.1.*",
+        "magento/module-customer": "103.0.3-p1"
+
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Ziffity\\AddCustomer\\": ""
+        }
+    }
+}
+
