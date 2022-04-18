@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+        <preference for="Ziffity\AddCart\Api\FetchAllCartInterface"
+                    type="Ziffity\AddCart\Model\FetchAllCartRepository" />
+
+        <preference for="Ziffity\AddCart\Api\SingleCartDetailsInterface"
+                    type="Ziffity\AddCart\Model\SingleCartDetailsRepository" />
+
+        <preference for="Ziffity\AddCart\Api\SaveCartInterface"
+                    type="Ziffity\AddCart\Model\SaveCartRepository" />
+
+        <preference for="Ziffity\AddCart\Api\EditCartInterface"
+                    type="Ziffity\AddCart\Model\EditCartRepository" />
+
+        <preference for="Ziffity\AddCart\Api\DeleteCartInterface"
+                    type="Ziffity\AddCart\Model\DeleteCartRepository" />
+
+        <preference for="Ziffity\AddCart\Api\DataInterface"
+                    type="Ziffity\AddCart\Model\Data" />
+</config>
