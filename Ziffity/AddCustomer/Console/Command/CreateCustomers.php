@@ -3,25 +3,32 @@
 namespace Ziffity\AddCustomer\Console\Command;
 
 use Exception;
-use Magento\Framework\Filesystem\DirectoryList;
-use Magento\Framework\Console\Cli;
-use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
+use Magento\Framework\App\State;
+use Magento\Framework\Console\Cli;
+use Magento\Framework\File\Size;
+use Magento\Framework\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem\Io\File;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBarFactory;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Ziffity\AddCustomer\Model\Customer;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
-use Magento\Framework\File\Size;
-use Symfony\Component\Console\Helper\ProgressBarFactory;
 use Ziffity\AddCustomer\Model\Import\CsvImport;
 use Ziffity\AddCustomer\Model\Import\JsonImport;
 
 
 class CreateCustomers extends Command
 {
+    const PROFILE = 'profile';
+    const CSV = 'csv';
+    const JSON = 'json';
+    /**
+     * @var Size
+     */
+    protected $fileSize;
     /**
      * @var Customer
      */
@@ -31,10 +38,6 @@ class CreateCustomers extends Command
      */
     private $state;
     /**
-     * @var
-     */
-    protected $_fileSystem;
-    /**
      * @var DirectoryList
      */
     private $directoryList;
@@ -42,17 +45,10 @@ class CreateCustomers extends Command
      * @var File
      */
     private $fileSystemIo;
-
-    /**
-     * @var Size
-     */
-    protected $fileSize;
-
-    CONST PROFILE='profile';
     /**
      * @var ProgressBarFactory
      */
-    private  $progressBarFactory;
+    private $progressBarFactory;
     /**
      * @var CsvImport
      */
@@ -68,17 +64,21 @@ class CreateCustomers extends Command
      * @param State $state
      * @param DirectoryList $directoryList
      * @param Size $fileSize
+     * @param ProgressBarFactory $progressBarFactory
+     * @param CsvImport $csvImport
+     * @param JsonImport $jsonImport
      */
     public function __construct(
-        File               $filesystemIo ,
-        Customer           $customer ,
-        State              $state ,
-        DirectoryList      $directoryList ,
-        Size               $fileSize ,
-        ProgressBarFactory $progressBarFactory ,
-        CsvImport          $csvImport ,
+        File               $filesystemIo,
+        Customer           $customer,
+        State              $state,
+        DirectoryList      $directoryList,
+        Size               $fileSize,
+        ProgressBarFactory $progressBarFactory,
+        CsvImport          $csvImport,
         JsonImport         $jsonImport
-    ) {
+    )
+    {
         parent::__construct();
         $this->fileSystemIo = $filesystemIo;
         $this->customer = $customer;
@@ -90,6 +90,7 @@ class CreateCustomers extends Command
         $this->jsonImport = $jsonImport;
 
     }
+
     /**
      * @return void
      */
@@ -98,7 +99,7 @@ class CreateCustomers extends Command
         $this->setName("customer:importer");
         $this->setDescription("Import customers data from csv or json file");
         $this->addOption(
-            'profile',
+            self::PROFILE,
             null,
             InputOption::VALUE_REQUIRED,
             'Profile Name only supports csv and json formats'
@@ -107,7 +108,6 @@ class CreateCustomers extends Command
         parent::configure();
 
     }
-
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -120,31 +120,32 @@ class CreateCustomers extends Command
             $profile = $input->getOption('profile');
             $varDirectory = $this->directoryList->getPath('var');
             $magentoRootDirectory = $this->directoryList->getRoot();
-           //Validate File Type
+            //Validate File Type
             $pathInfo = $this->fileSystemIo->getPathInfo($source);
             $extension = $pathInfo['extension'] ?? '';
             if (!$profile) {
                 $profile = $extension;
             }
             if ((!($profile === "csv" || $profile === "json")) || ($profile !== $extension)) {
-                throw new Exception(__("Invalid file type!"));
+                throw new \RuntimeException(__("Invalid file type!"));
             }
-            //Validate File Size
-            $maxImageSize = $this->fileSize->getMaxFileSizeInMb();
-            if ($maxImageSize) {
-                $message = __('The total size of the uploadable files can\'t be more than %1M', $maxImageSize);
-            } else {
-                $message = __('System doesn\'t allow to get file upload settings');
-            }
-            $profileObj = $this->getProfileObj($profile);
 
+            $profileObj = $this->getProfileObj($profile);
             $sourcePath = $magentoRootDirectory . '/' . $source;
             $destinationPath = $varDirectory . '/' . $source;
             $this->fileSystemIo->cp($sourcePath, $destinationPath);
+            //Validate File Size
+           $fileSize= filesize($sourcePath);
+           $fileSizeMb=$this->fileSize->getFileSizeInMb($fileSize);
+            $maxFileSize = $this->fileSize->getMaxFileSizeInMb();
+            if ($maxFileSize<$fileSizeMb) {
+                throw new \RuntimeException(__("Invalid Size!"));
+            }
+
             $this->state->setAreaCode(Area::AREA_GLOBAL);
             $output->writeln('<info>Execution starts.</info>');
             //Importing customers
-            $this->customer->install($destinationPath, $output,$profileObj,$this->progressBarFactory);
+            $this->customer->install($destinationPath, $output, $profileObj, $this->progressBarFactory);
             $output->write(PHP_EOL);
             $output->writeln('<info>Execution ends.</info>');
             return Cli::RETURN_SUCCESS;
@@ -155,16 +156,18 @@ class CreateCustomers extends Command
         }
     }
 
+
     /**
      * @param $profile
-     * @return void
      */
-    private function getProfileObj($profile) {
+    private function getProfileObj($profile)
+    {
         switch ($profile) {
-            case "csv":
-                return $this->csvImport;
-            case "json":
+            case self::JSON:
                 return $this->jsonImport;
+            case self::CSV:
+            default:
+                return $this->csvImport;
         }
     }
 }

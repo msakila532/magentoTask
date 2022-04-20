@@ -1,19 +1,20 @@
 <?php
+declare(strict_types=1);
 
 namespace Ziffity\AddCustomer\Model\Import;
 
+use Exception;
 use Magento\Framework\File\Csv;
+use Symfony\Component\Console\Output\OutputInterface;
 use Ziffity\AddCustomer\Profiles\ProfileInterface;
 
 class CsvImport implements ProfileInterface
 {
     /**
-     * @var Csv
+     * @param Csv
      */
     private $csvParser;
-    /**
-     * @param Csv $csvParser
-     */
+
     public function __construct
     (
         Csv $csvParser
@@ -21,28 +22,29 @@ class CsvImport implements ProfileInterface
     {
         $this->csvParser = $csvParser;
     }
+
     /**
      * @param $file
-     * @return array|void
+     * @param OutputInterface $output
+     * @return array
      */
-    public function getData($file)
+    public function getData(string $file, OutputInterface $output): array
     {
         try {
-                $chunks = [];
-                $data = [];
-                $contents = $this->csvParser->getData($file);
-                $headers = !empty($contents) ? $contents[0] : [];
-                foreach ($contents as $row => $values) {
-                    if ($row > 0) {
-                        foreach ($values as $key => $value) {
-                            $data[$headers[$key]] = $value;
-                        }
-                        $chunks[] = $data;
+            $chunks = [];
+            $data = [];
+            $contents = $this->csvParser->getData($file);
+            $headers = !empty($contents) ? $contents[0] : [];
+            foreach ($contents as $row => $values) {
+                if ($row > 0) {
+                    foreach ($values as $key => $value) {
+                        $data[$headers[$key]] = $value;
                     }
+                    $chunks[] = $data;
                 }
-                //return $chunks;
-             } catch (\Exception $e) {
-           $e->getMessage();
+            }
+        } catch (Exception $e) {
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
         return $chunks;
     }

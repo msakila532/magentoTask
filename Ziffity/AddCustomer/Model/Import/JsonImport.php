@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Ziffity\AddCustomer\Model\Import;
 
+use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\Driver\File;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\Exception\InvalidArgumentException;
-use Ziffity\AddCustomer\Model\Customer;
+use Symfony\Component\Console\Output\OutputInterface;
 use Ziffity\AddCustomer\Profiles\ProfileInterface;
 
 
@@ -14,40 +15,40 @@ class JsonImport implements ProfileInterface
     /**
      * @var SerializerInterface
      */
-    private $serializer;
+    private SerializerInterface $serializer;
     /**
      * @var File
      */
-    private $file;
+    private File $file;
+
 
     /**
-     * @param Customer $customer
      * @param File $file
      * @param SerializerInterface $serializer
      */
     public function __construct(
-        File $file,
+        File                $file,
         SerializerInterface $serializer
-    ) {
+    )
+    {
         $this->serializer = $serializer;
         $this->file = $file;
     }
 
     /**
-     * @param string $fixture
-     * @return mixed|void
-     * @throws InvalidArgumentException
-     * @throws \Magento\Framework\Exception\FileSystemException
+     * @param string $file
+     * @param OutputInterface $output
+     * @return array
      */
-    public function getData($fixture)
+    public function getData(string $file, OutputInterface $output): array
     {
-        $str = $this->file->fileGetContents($fixture);
-        $data = [];
-        $json = $this->serializer->unserialize($str, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException(__('Unable to unserialize json file.'));
+        try {
+            $contents = $this->file->fileGetContents($file);
+            $chunks = $this->serializer->unserialize($contents);
+        } catch (FileSystemException $e) {
+            return $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
-        return $json;
+        return $chunks;
     }
 }
 
