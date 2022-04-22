@@ -9,7 +9,6 @@ use Magento\Framework\Serialize\SerializerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Ziffity\AddCustomer\Profiles\ProfileInterface;
 
-
 class JsonImport implements ProfileInterface
 {
     /**
@@ -20,7 +19,6 @@ class JsonImport implements ProfileInterface
      * @var File
      */
     private File $file;
-
 
     /**
      * @param File $file

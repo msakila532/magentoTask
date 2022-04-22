@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Ziffity\AddCustomer\Console\Command;
 
@@ -18,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Ziffity\AddCustomer\Model\Customer;
 use Ziffity\AddCustomer\Model\Import\CsvImport;
 use Ziffity\AddCustomer\Model\Import\JsonImport;
-
 
 class CreateCustomers extends Command
 {
@@ -88,7 +88,6 @@ class CreateCustomers extends Command
         $this->progressBarFactory = $progressBarFactory;
         $this->csvImport = $csvImport;
         $this->jsonImport = $jsonImport;
-
     }
 
     /**
@@ -155,8 +154,6 @@ class CreateCustomers extends Command
             return Cli::RETURN_FAILURE;
         }
     }
-
-
     /**
      * @param $profile
      */
